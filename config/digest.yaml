@@ -1,0 +1,146 @@
+# OVERHEAR digest — OpenClaw-style searches + minimal RSS + Contracts Finder.
+# Deadlines: heuristic date parsing; verify on source pages. Wikipedia and similar are blocked.
+
+rss_feeds:
+  - url: "https://www.heritagefund.org.uk/rss-feeds-by-term/10430.xml"
+    section: funding
+    name: National Lottery Heritage Fund
+    relax_funding_strict: true
+    output_category: funding_opportunities
+
+  - url: "https://www.birminghammuseums.org.uk/feed.rss"
+    section: sector
+    name: Birmingham Museums Trust
+    output_category: birmingham_black_country
+
+  - url: "https://www.frictionarts.com/feed/"
+    section: sector
+    name: Friction Arts
+    output_category: birmingham_black_country
+
+  - url: "https://bom.org.uk/feed/"
+    section: sector
+    name: BOM (Birmingham Open Media)
+    output_category: birmingham_black_country
+
+contracts_finder:
+  enabled: true
+  published_from_days: 14
+  fetch_size: 40
+  require_keyword_match: true
+  match_mode: health_creative
+
+relevance:
+  funding_strict:
+    enabled: true
+  dedupe_one_per_domain_sector: true
+
+history:
+  enabled: true
+  days: 7
+  path: data/digest_history.json
+
+filters:
+  blocked_hosts:
+    - wikipedia.org
+    - wikimedia.org
+    - wiktionary.org
+    - skiddle.com
+    - ents24.com
+  # URL substring blocks (defaults also include Companies House). Tune in config.py defaults or override here.
+  # blocked_url_substrings: []
+  # nlhf_drop_patterns: []  # regex strings; defaults strip NLHF award/tips/marketing posts
+  # birmingham_drop_title_patterns: []
+  birmingham_min_summary_chars: 48
+
+briefing_caps:
+  culture_central_max: 3
+  chwa_max: 2
+
+search:
+  enabled: true
+  provider: brave
+  max_results_per_query: 3
+  max_queries_per_run: 22
+  queries:
+    - query: "site:culturecentral.co.uk news 2026"
+      category: briefing_culture_central
+    - query: "site:culturehealthandwellbeing.org.uk news 2026"
+      category: briefing_chwa
+    - query: '"Walk Listen Create" 2026'
+      category: audio_walking_arts
+    - query: "Friction Arts Birmingham 2026"
+      category: birmingham_black_country
+    - query: '"Civic Square" Birmingham 2026'
+      category: birmingham_black_country
+    - query: "Punch Birmingham arts 2026"
+      category: birmingham_black_country
+    - query: "Birmingham arts open call commission 2026"
+      category: birmingham_black_country
+    - query: '"Creative Black Country" 2026'
+      category: birmingham_black_country
+    - query: "audio trail funding open call UK 2026"
+      category: audio_walking_arts
+    - query: "Arts Council England project grants open call 2026"
+      category: funding_opportunities
+    - query: "National Lottery Heritage Fund open call 2026"
+      category: funding_opportunities
+    - query: "community arts commission UK 2026"
+      category: funding_opportunities
+    - query: "soundwalk geolocated audio new project 2026"
+      category: audio_walking_arts
+    - query: "sound walk open call commission 2026"
+      category: audio_walking_arts
+    - query: "oral history audio project UK 2026"
+      category: audio_walking_arts
+    - query: "poet in residence commission UK 2026"
+      category: poetry_place
+    - query: "creative health arts commission UK 2026"
+      category: arts_health
+    - query: '"Healing Arts" Birmingham 2026'
+      category: arts_health
+    - query: '"BOM Lab" Birmingham 2026'
+      category: birmingham_black_country
+
+keywords:
+  - term: arts
+    weight: 1.0
+  - term: heritage
+    weight: 1.2
+  - term: funding
+    weight: 1.3
+  - term: grant
+    weight: 1.2
+  - term: commission
+    weight: 1.0
+  - term: open call
+    weight: 1.1
+  - term: birmingham
+    weight: 1.0
+  - term: west midlands
+    weight: 0.9
+  - term: audio
+    weight: 1.1
+  - term: soundwalk
+    weight: 1.2
+  - term: participatory
+    weight: 1.0
+  - term: wellbeing
+    weight: 1.0
+  - term: poetry
+    weight: 1.0
+  - term: museum
+    weight: 0.9
+  - term: culture
+    weight: 0.9
+
+email:
+  subject_template: "OVERHEAR Daily Briefing — {date}"
+
+limits:
+  max_items_per_section: 10
+  max_time_sensitive_items: 12
+  max_worth_checking_items: 6
+  min_score_search: 0.55
+  rss_base_score: 2.0
+  contracts_base_score: 1.2

@@ -1,0 +1,56 @@
+OVERHEAR digest — {{ date }}
+{{ item_count }} item{% if item_count != 1 %}s{% endif %}
+
+================================================================================
+FUNDING & GRANTS
+================================================================================
+{% if funding %}
+{% for item in funding %}
+* {{ item.title }}
+  {{ item.url }}
+{% if item.source_name %}  Source: {{ item.source_name }}{% endif %}
+{% if item.summary %}
+  {{ item.summary | replace('\n', ' ') }}
+{% endif %}
+
+{% endfor %}
+{% else %}
+(no items)
+{% endif %}
+
+================================================================================
+SECTOR NEWS
+================================================================================
+{% if sector %}
+{% for item in sector %}
+* {{ item.title }}
+  {{ item.url }}
+{% if item.source_name %}  Source: {{ item.source_name }}{% endif %}
+{% if item.summary %}
+  {{ item.summary | replace('\n', ' ') }}
+{% endif %}
+
+{% endfor %}
+{% else %}
+(no items)
+{% endif %}
+
+================================================================================
+TENDERS & CONTRACTS
+================================================================================
+{% if tenders %}
+{% for item in tenders %}
+* {{ item.title }}
+  {{ item.url }}
+{% if item.source_name %}  Source: {{ item.source_name }}{% endif %}
+{% if item.summary %}
+  {{ item.summary | replace('\n', ' ') }}
+{% endif %}
+
+{% endfor %}
+{% else %}
+(no items)
+{% endif %}
+
+---
+https://theoverhear.app

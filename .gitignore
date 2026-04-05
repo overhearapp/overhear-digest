@@ -1,0 +1,13 @@
+.DS_Store
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.env
+*.egg-info/
+dist/
+build/
+
+# Rolling digest URL memory (local + restored in CI via cache)
+data/digest_history.json

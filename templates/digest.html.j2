@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OVERHEAR digest — {{ date }}</title>
+  <style>
+    body { font-family: Georgia, 'Times New Roman', serif; line-height: 1.45; color: #1a1a1a; max-width: 640px; margin: 0 auto; padding: 24px 16px; }
+    h1 { font-size: 1.35rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .meta { color: #555; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    h2 { font-size: 1.05rem; margin-top: 1.75rem; margin-bottom: 0.5rem; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+    ul { list-style: none; padding: 0; margin: 0; }
+    li { margin-bottom: 1rem; }
+    a { color: #0b5cab; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .src { font-size: 0.8rem; color: #666; margin-top: 2px; }
+    .sum { font-size: 0.88rem; color: #444; margin-top: 4px; }
+    .empty { color: #777; font-style: italic; }
+    footer { margin-top: 2rem; font-size: 0.8rem; color: #888; }
+  </style>
+</head>
+<body>
+  <h1>OVERHEAR digest</h1>
+  <p class="meta">{{ date }} · {{ item_count }} item{% if item_count != 1 %}s{% endif %}</p>
+
+  <h2>Funding &amp; grants</h2>
+  {% if funding %}
+  <ul>
+    {% for item in funding %}
+    <li>
+      <a href="{{ item.url }}">{{ item.title }}</a>
+      {% if item.source_name %}<div class="src">{{ item.source_name }}</div>{% endif %}
+      {% if item.summary %}<div class="sum">{{ item.summary }}</div>{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty">No items in this section today.</p>
+  {% endif %}
+
+  <h2>Sector news</h2>
+  {% if sector %}
+  <ul>
+    {% for item in sector %}
+    <li>
+      <a href="{{ item.url }}">{{ item.title }}</a>
+      {% if item.source_name %}<div class="src">{{ item.source_name }}</div>{% endif %}
+      {% if item.summary %}<div class="sum">{{ item.summary }}</div>{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty">No items in this section today.</p>
+  {% endif %}
+
+  <h2>Tenders &amp; contracts</h2>
+  {% if tenders %}
+  <ul>
+    {% for item in tenders %}
+    <li>
+      <a href="{{ item.url }}">{{ item.title }}</a>
+      {% if item.source_name %}<div class="src">{{ item.source_name }}</div>{% endif %}
+      {% if item.summary %}<div class="sum">{{ item.summary }}</div>{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty">No items in this section today.</p>
+  {% endif %}
+
+  <footer>
+    Automated digest for <a href="https://theoverhear.app">OVERHEAR</a>. Sources: configured RSS and web search.
+  </footer>
+</body>
+</html>

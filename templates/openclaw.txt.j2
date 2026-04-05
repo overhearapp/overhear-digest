@@ -1,0 +1,133 @@
+OVERHEAR Daily Briefing — {{ date }}
+{{ item_count }} link(s) in this send (after filters & 7-day dedupe).
+
+================================================================================
+📋 DAILY BRIEFING
+================================================================================
+
+Culture Central (up to 3)
+{% if view.culture_central %}
+{% for item in view.culture_central %}
+• {{ item.title }}
+  {{ display_summary(item) }}
+  Why: {{ why.get(item.category, "Sector signal.") }}
+  Link: <{{ item.url }}>
+{% endfor %}
+{% else %}
+(skip — nothing new)
+{% endif %}
+
+CHWA (up to 2)
+{% if view.chwa %}
+{% for item in view.chwa %}
+• {{ item.title }}
+  {{ display_summary(item) }}
+  Why: {{ why.get(item.category, "Creative health context.") }}
+  Link: <{{ item.url }}>
+{% endfor %}
+{% else %}
+(skip — nothing new)
+{% endif %}
+
+================================================================================
+🎧 OVERHEAR DIGEST
+================================================================================
+
+⚡ Time-Sensitive (upcoming deadlines — soonest first; exact date when parsed)
+{% if view.time_sensitive %}
+{% for item in view.time_sensitive %}
+• {{ item.title }} — deadline {{ item.deadline_at.strftime("%d %B %Y") if item.deadline_at else "?" }}
+  {{ display_summary(item) }}
+  Why: {{ why.get("time_sensitive", "") }}
+  Link: <{{ item.url }}>
+{% endfor %}
+{% else %}
+(skip)
+{% endif %}
+
+💰 Funding & Opportunities
+{% if view.funding %}
+{% for item in view.funding %}
+• {{ item.title }}
+  {{ display_summary(item) }}
+  Why: {{ why.get("funding_opportunities", "") }}
+  Link: <{{ item.url }}>
+{% endfor %}
+{% else %}
+(skip)
+{% endif %}
+
+🏙️ Birmingham & Black Country Watch
+{% if view.birmingham %}
+{% for item in view.birmingham %}
+• {{ item.title }}
+  {{ display_summary(item) }}
+  Why: {{ why.get("birmingham_black_country", "") }}
+  Link: <{{ item.url }}>
+{% endfor %}
+{% else %}
+(skip)
+{% endif %}
+
+🎧 Audio & Walking Arts
+{% if view.audio %}
+{% for item in view.audio %}
+• {{ item.title }}
+  {{ display_summary(item) }}
+  Why: {{ why.get("audio_walking_arts", "") }}
+  Link: <{{ item.url }}>
+{% endfor %}
+{% else %}
+(skip)
+{% endif %}
+
+✍️ Poetry & Place
+{% if view.poetry %}
+{% for item in view.poetry %}
+• {{ item.title }}
+  {{ display_summary(item) }}
+  Why: {{ why.get("poetry_place", "") }}
+  Link: <{{ item.url }}>
+{% endfor %}
+{% else %}
+(skip)
+{% endif %}
+
+🧐 Arts & Health
+{% if view.arts_health %}
+{% for item in view.arts_health %}
+• {{ item.title }}
+  {{ display_summary(item) }}
+  Why: {{ why.get("arts_health", "") }}
+  Link: <{{ item.url }}>
+{% endfor %}
+{% else %}
+(skip)
+{% endif %}
+
+🌐 Network & Other
+{% if view.network %}
+{% for item in view.network %}
+• {{ item.title }}
+  {{ display_summary(item) }}
+  Why: {{ why.get("network_other", "") }}
+  Link: <{{ item.url }}>
+{% endfor %}
+{% else %}
+(skip)
+{% endif %}
+
+🧐 Worth Checking (deadline language but date not verified — confirm on site)
+{% if view.worth_checking %}
+{% for item in view.worth_checking %}
+• {{ item.title }}
+  {{ display_summary(item) }}
+  Why: {{ why.get("worth_checking", "") }}
+  Link: <{{ item.url }}>
+{% endfor %}
+{% else %}
+(skip)
+{% endif %}
+
+---
+https://theoverhear.app

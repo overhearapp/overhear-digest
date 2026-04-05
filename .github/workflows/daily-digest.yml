@@ -1,0 +1,48 @@
+name: Daily OVERHEAR digest
+
+on:
+  schedule:
+    # Weekdays only (Mon–Fri). GitHub cron is UTC, not UK local time.
+    # 10:00 UTC = 10:00 UK in winter (GMT). In summer (BST), 10:00 UK = 09:00 UTC — change to "0 9 * * 1-5" if you prefer 10:00 UK all year (then winter runs at 09:00 UK).
+    - cron: "0 10 * * 1-5"
+  workflow_dispatch:
+
+concurrency:
+  group: digest-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: data/digest_history.json
+          key: digest-history-${{ github.run_id }}
+          restore-keys: digest-history-
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install
+        run: pip install -e .
+
+      - name: Run digest
+        env:
+          DIGEST_TO_EMAIL: ${{ secrets.DIGEST_TO_EMAIL }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          RESEND_FROM: ${{ secrets.RESEND_FROM }}
+          EMAIL_PROVIDER: ${{ secrets.EMAIL_PROVIDER }}
+          MAILJET_API_KEY: ${{ secrets.MAILJET_API_KEY }}
+          MAILJET_SECRET_KEY: ${{ secrets.MAILJET_SECRET_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          BRAVE_API_KEY: ${{ secrets.BRAVE_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GOOGLE_CSE_ID: ${{ secrets.GOOGLE_CSE_ID }}
+        run: overhear-digest
