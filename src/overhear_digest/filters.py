@@ -33,6 +33,28 @@ def drop_blocked_url_substrings(
     return out
 
 
+def filter_artscouncil_generic_pages(
+    items: list[DigestItem], settings: DigestSettings
+) -> list[DigestItem]:
+    """Drop evergreen ACE hub pages; keep time-bound announcements on artscouncil.org.uk."""
+    fc = settings.filters
+    title_pats = [re.compile(p, re.I) for p in fc.ace_drop_title_patterns]
+    url_subs = [s.lower() for s in fc.ace_drop_url_substrings]
+    out: list[DigestItem] = []
+    for item in items:
+        u = item.url.lower()
+        if "artscouncil.org.uk" not in u:
+            out.append(item)
+            continue
+        blob = f"{item.title} {strip_html(item.summary, limit=500)}"
+        if any(p.search(blob) for p in title_pats):
+            continue
+        if any(s in u for s in url_subs):
+            continue
+        out.append(item)
+    return out
+
+
 def filter_nlhf_rss_soft_news(
     items: list[DigestItem], settings: DigestSettings
 ) -> list[DigestItem]:

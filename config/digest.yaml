@@ -45,8 +45,7 @@ filters:
     - wikipedia.org
     - wikimedia.org
     - wiktionary.org
-    - skiddle.com
-    - ents24.com
+
   # URL substring blocks (defaults also include Companies House). Tune in config.py defaults or override here.
   # blocked_url_substrings: []
   # nlhf_drop_patterns: []  # regex strings; defaults strip NLHF award/tips/marketing posts

@@ -2,10 +2,17 @@ name: Daily OVERHEAR digest
 
 on:
   schedule:
-    # Weekdays only (Mon–Fri). GitHub cron is UTC, not UK local time.
-    # 10:00 UTC = 10:00 UK in winter (GMT). In summer (BST), 10:00 UK = 09:00 UTC — change to "0 9 * * 1-5" if you prefer 10:00 UK all year (then winter runs at 09:00 UK).
+    # Weekdays Mon–Fri. GitHub schedule is UTC; UTC matches GMT, so this is 10:00 GMT year-round.
+    # (When the UK is on BST, local civil time is one hour ahead of GMT — i.e. 10:00 GMT = 11:00 in London.)
     - cron: "0 10 * * 1-5"
+  # Test the same job as cron: Actions → Daily OVERHEAR digest → Run workflow (optionally enable dry run).
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Fetch and score only; print digest to logs (no email)"
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: digest-${{ github.ref }}
@@ -15,15 +22,16 @@ jobs:
   send:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # v6 / v5 / v6 use Node.js 24 (avoids Node 20 deprecation on hosted runners)
+      - uses: actions/checkout@v6
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: data/digest_history.json
           key: digest-history-${{ github.run_id }}
           restore-keys: digest-history-
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: pip
@@ -45,4 +53,10 @@ jobs:
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           GOOGLE_CSE_ID: ${{ secrets.GOOGLE_CSE_ID }}
-        run: overhear-digest
+        run: |
+          set -e
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            overhear-digest --dry-run --print-email
+          else
+            overhear-digest
+          fi

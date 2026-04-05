@@ -126,6 +126,27 @@ class FilterConfig(BaseModel):
     )
     # Search hits with almost no snippet are usually directory junk
     birmingham_min_summary_chars: int = 48
+    # artscouncil.org.uk: drop evergreen “open funds / system update / NPLG hub” pages, not one-off announcements
+    ace_drop_title_patterns: list[str] = Field(
+        default_factory=lambda: [
+            r"grants system update",
+            r"^our open funds\b",
+            r"\bour open funds\s*\|\s*arts council",
+            r"national lottery project grants\s*\|\s*arts council",
+            r"^arts council national lottery project grants\b",
+            r"^looking for funding\?\s*have a look at our open funds",
+            # Boilerplate in body when title is slightly different
+            r"we['’]ve updated our grants system",
+            r"rolling programme national lottery project grants anytime",
+            r"manage regular funding and keep in touch with us on the system",
+        ]
+    )
+    ace_drop_url_substrings: list[str] = Field(
+        default_factory=lambda: [
+            "artscouncil.org.uk/funding/our-open-funds",
+            "artscouncil.org.uk/funding/apply-for-funding",
+        ]
+    )
 
 
 class LimitsConfig(BaseModel):

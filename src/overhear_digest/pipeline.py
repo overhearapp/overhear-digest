@@ -15,6 +15,7 @@ from overhear_digest.filters import (
     apply_funding_rss_gate,
     drop_blocked_hosts,
     drop_blocked_url_substrings,
+    filter_artscouncil_generic_pages,
     filter_birmingham_scene_noise,
     filter_nlhf_rss_soft_news,
 )
@@ -51,6 +52,7 @@ def build_openclaw_digest(
     raw_n = len(items)
     items = drop_blocked_hosts(items, settings)
     items = drop_blocked_url_substrings(items, settings)
+    items = filter_artscouncil_generic_pages(items, settings)
     items = filter_nlhf_rss_soft_news(items, settings)
     items = apply_funding_rss_gate(items, settings)
     apply_scores(items, settings)
