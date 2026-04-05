@@ -72,6 +72,8 @@ class FilterConfig(BaseModel):
             "wiktionary.org",
             "skiddle.com",
             "ents24.com",
+            "federalregister.gov",
+            "regulations.gov",
         ]
     )
     # Drop if URL contains any of these (Companies House, ticket hubs, etc.)

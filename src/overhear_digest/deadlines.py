@@ -15,7 +15,7 @@ DEADLINE_HINT = re.compile(
 
 EVENT_HINT = re.compile(
     r"\b(event|launch|opening|private view|pv|workshop on|seminar on|"
-    r"conference|festival)\b",
+    r"conference|festival|meeting|open day|sunshine act)\b",
     re.I,
 )
 
@@ -52,12 +52,27 @@ _RE_D_MON_Y = re.compile(
     r"Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[,\s]+(20\d{2})\b",
     re.I,
 )
+# US-style: "Thursday, March 26, 2026" / "March 26, 2026"
+_RE_MON_DAY_Y = re.compile(
+    r"\b(January|February|March|April|May|June|July|August|September|October|November|December|"
+    r"Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)\s+"
+    r"(\d{1,2})(?:st|nd|rd|th)?,?\s+(20\d{2})\b",
+    re.I,
+)
 _RE_ISO = re.compile(r"\b(20\d{2})-(\d{2})-(\d{2})\b")
 _RE_DMY = re.compile(r"\b(\d{1,2})/(\d{1,2})/(20\d{2})\b")
 
 
 def _parse_dates_from_text(text: str) -> list[date]:
     found: list[date] = []
+    for m in _RE_MON_DAY_Y.finditer(text):
+        mon, d, y = m.groups()
+        mi = _MONTHS.get(mon.lower()[:3]) or _MONTHS.get(mon.lower())
+        if mi:
+            try:
+                found.append(date(int(y), mi, int(d)))
+            except ValueError:
+                pass
     for m in _RE_D_MON_Y.finditer(text):
         d, mon, y = m.groups()
         mi = _MONTHS.get(mon.lower()[:3]) or _MONTHS.get(mon.lower())

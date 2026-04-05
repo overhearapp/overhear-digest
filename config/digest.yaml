@@ -45,6 +45,10 @@ filters:
     - wikipedia.org
     - wikimedia.org
     - wiktionary.org
+    - skiddle.com
+    - ents24.com
+    - federalregister.gov
+    - regulations.gov
 
   # URL substring blocks (defaults also include Companies House). Tune in config.py defaults or override here.
   # blocked_url_substrings: []
@@ -70,13 +74,13 @@ search:
       category: briefing_chwa
     - query: '"Walk Listen Create" 2026'
       category: audio_walking_arts
-    - query: "Friction Arts Birmingham 2026"
+    - query: "Friction Arts Birmingham UK 2026"
       category: birmingham_black_country
-    - query: '"Civic Square" Birmingham 2026'
+    - query: '"Civic Square" Birmingham UK 2026'
       category: birmingham_black_country
-    - query: "Punch Birmingham arts 2026"
+    - query: "Punch creative agency Birmingham UK arts 2026"
       category: birmingham_black_country
-    - query: "Birmingham arts open call commission 2026"
+    - query: "Birmingham UK West Midlands arts open call commission 2026"
       category: birmingham_black_country
     - query: '"Creative Black Country" 2026'
       category: birmingham_black_country
@@ -98,9 +102,9 @@ search:
       category: poetry_place
     - query: "creative health arts commission UK 2026"
       category: arts_health
-    - query: '"Healing Arts" Birmingham 2026'
+    - query: '"Healing Arts" Birmingham UK 2026'
       category: arts_health
-    - query: '"BOM Lab" Birmingham 2026'
+    - query: '"BOM Lab" Birmingham UK 2026'
       category: birmingham_black_country
 
 keywords:
