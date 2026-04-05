@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import re
+from datetime import date, datetime
+from urllib.parse import urlparse
 
 from overhear_digest import categories as cat
 from overhear_digest.config import DigestSettings
@@ -31,6 +33,85 @@ def drop_blocked_url_substrings(
             continue
         out.append(item)
     return out
+
+
+def filter_by_recency(
+    items: list[DigestItem],
+    today: date,
+    settings: DigestSettings,
+) -> list[DigestItem]:
+    """
+    Drop items older than the configured calendar-year window.
+
+    Uses ``published`` when present (RSS, contracts). For search hits without a
+    date, infers a year from URL path segments and from 20xx mentions in the
+    title or summary (ignoring years before today.year - 6 to reduce noise).
+    """
+    lim = settings.limits
+    if not lim.recency_enabled:
+        return items
+    min_year = today.year - lim.recency_year_offset
+    out: list[DigestItem] = []
+    for item in items:
+        if _item_passes_recency(item, today, min_year):
+            out.append(item)
+    return out
+
+
+def _published_calendar_year(item: DigestItem) -> int | None:
+    if item.published is None:
+        return None
+    pd = item.published
+    if isinstance(pd, datetime):
+        return pd.year
+    return getattr(pd, "year", None)
+
+
+def _years_in_url_path(url: str) -> list[int]:
+    years: list[int] = []
+    for seg in urlparse(url).path.split("/"):
+        if len(seg) == 4 and seg.isdigit():
+            y = int(seg)
+            if 1998 <= y <= 2038:
+                years.append(y)
+    return years
+
+
+def _recent_window_years_in_text(text: str, today: date) -> list[int]:
+    lo = today.year - 6
+    hi = today.year + 1
+    found: list[int] = []
+    for m in re.finditer(r"\b(20\d{2})\b", text):
+        y = int(m.group(1))
+        if lo <= y <= hi:
+            found.append(y)
+    return found
+
+
+def _max_inferred_year_search(item: DigestItem, today: date) -> int | None:
+    path_y = _years_in_url_path(item.url)
+    blob = f"{item.title} {strip_html(item.summary, limit=500)}"
+    text_y = _recent_window_years_in_text(blob, today)
+    parts: list[int] = []
+    if path_y:
+        parts.append(max(path_y))
+    if text_y:
+        parts.append(max(text_y))
+    if not parts:
+        return None
+    return max(parts)
+
+
+def _item_passes_recency(item: DigestItem, today: date, min_year: int) -> bool:
+    pub_y = _published_calendar_year(item)
+    if pub_y is not None:
+        return pub_y >= min_year
+
+    if item.origin == "search":
+        inferred = _max_inferred_year_search(item, today)
+        if inferred is not None and inferred < min_year:
+            return False
+    return True
 
 
 def filter_artscouncil_generic_pages(

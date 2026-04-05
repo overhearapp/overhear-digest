@@ -59,6 +59,8 @@ briefing_caps:
 search:
   enabled: true
   provider: brave
+  # Brave API: py ≈ past 365 days (reduces stale hits when queries still match old pages)
+  brave_freshness: py
   max_results_per_query: 3
   max_queries_per_run: 22
   queries:
@@ -143,3 +145,6 @@ limits:
   min_score_search: 0.55
   rss_base_score: 2.0
   contracts_base_score: 1.2
+  # Drop RSS/contracts by published year; search hits by URL/title/snippet year (current + previous year only)
+  recency_enabled: true
+  recency_year_offset: 1

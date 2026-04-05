@@ -37,6 +37,8 @@ class SearchConfig(BaseModel):
     provider: Literal["brave", "tavily", "google_cse", "none"] = "brave"
     max_results_per_query: int = 3
     max_queries_per_run: int = 25
+    # Brave only: bias toward recent pages (py ≈ past year). See Brave Web Search API freshness param.
+    brave_freshness: str | None = "py"
     queries: list[SearchQueryEntry] = Field(default_factory=list)
 
     @field_validator("queries", mode="before")
@@ -156,6 +158,10 @@ class LimitsConfig(BaseModel):
     min_score_search: float = 0.55
     rss_base_score: float = 2.0
     contracts_base_score: float = 1.2
+    # Drop stale items: keep current and previous calendar year when dated (published or inferred).
+    recency_enabled: bool = True
+    # min allowed calendar year = today.year - this value (1 → allow this year and last year only)
+    recency_year_offset: int = 1
 
 
 class ContractsFinderConfig(BaseModel):

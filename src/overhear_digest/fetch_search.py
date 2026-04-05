@@ -14,6 +14,8 @@ def _search_brave(
     api_key: str,
     query: str,
     count: int,
+    *,
+    freshness: str | None = None,
 ) -> list[tuple[str, str, str]]:
     """Return list of (title, url, description)."""
     url = "https://api.search.brave.com/res/v1/web/search"
@@ -21,7 +23,9 @@ def _search_brave(
         "Accept": "application/json",
         "X-Subscription-Token": api_key,
     }
-    params = {"q": query, "count": min(count, 20)}
+    params: dict[str, str | int] = {"q": query, "count": min(count, 20)}
+    if freshness:
+        params["freshness"] = freshness
     r = client.get(url, headers=headers, params=params, timeout=30.0)
     r.raise_for_status()
     data = r.json()
@@ -123,7 +127,13 @@ def fetch_search_results(
         q = qe.query
         try:
             if search_cfg.provider == "brave":
-                rows = _search_brave(client, env.brave_api_key, q, count)
+                rows = _search_brave(
+                    client,
+                    env.brave_api_key,
+                    q,
+                    count,
+                    freshness=(search_cfg.brave_freshness or "").strip() or None,
+                )
             elif search_cfg.provider == "tavily":
                 rows = _search_tavily(client, env.tavily_api_key, q, count)
             elif search_cfg.provider == "google_cse":
