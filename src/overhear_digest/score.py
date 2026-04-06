@@ -1,11 +1,20 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 from overhear_digest.config import DigestSettings, KeywordRule
 from overhear_digest.models import DigestBundle, DigestItem, Section
 from overhear_digest.relevance import domain_host, passes_funding_strict
+
+
+def published_sort_key(published: datetime | None) -> float:
+    """Stable ordering for mixed naive/aware datetimes (avoids TypeError in sort)."""
+    if published is None:
+        return float("-inf")
+    if published.tzinfo is not None:
+        return published.timestamp()
+    return published.replace(tzinfo=timezone.utc).timestamp()
 
 
 def normalize_url(url: str) -> str:
@@ -93,7 +102,7 @@ def filter_and_bucket(items: list[DigestItem], settings: DigestSettings) -> Dige
     def sort_and_trim(section: Section) -> list[DigestItem]:
         lst = by_section[section]
         lst.sort(
-            key=lambda x: (x.score, x.published or datetime.min),
+            key=lambda x: (x.score, published_sort_key(x.published)),
             reverse=True,
         )
         if section == Section.SECTOR and rel.dedupe_one_per_domain_sector:

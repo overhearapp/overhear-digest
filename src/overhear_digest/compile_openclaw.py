@@ -6,7 +6,7 @@ from datetime import date, datetime
 from overhear_digest import categories as cat
 from overhear_digest.config import DigestSettings
 from overhear_digest.models import DigestItem
-from overhear_digest.score import normalize_url
+from overhear_digest.score import normalize_url, published_sort_key
 from overhear_digest.textutil import strip_html
 
 
@@ -67,7 +67,7 @@ def _sort_by_deadline(items: list[DigestItem]) -> list[DigestItem]:
         key=lambda x: (
             x.deadline_at or date.max,
             x.score,
-            x.published or datetime.min,
+            published_sort_key(x.published),
         ),
     )
 
@@ -75,7 +75,7 @@ def _sort_by_deadline(items: list[DigestItem]) -> list[DigestItem]:
 def _sort_default(items: list[DigestItem]) -> list[DigestItem]:
     return sorted(
         items,
-        key=lambda x: (x.score, x.published or datetime.min),
+        key=lambda x: (x.score, published_sort_key(x.published)),
         reverse=True,
     )
 
