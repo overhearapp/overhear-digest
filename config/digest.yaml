@@ -55,6 +55,8 @@ filters:
   # nlhf_drop_patterns: []  # regex strings; defaults strip NLHF award/tips/marketing posts
   # birmingham_drop_title_patterns: []
   birmingham_min_summary_chars: 48
+  # Birmingham & Black Country: RSS must be within this many days; search uses pm + title/URL year
+  birmingham_max_age_days: 31
 
 briefing_caps:
   culture_central_max: 3
@@ -76,14 +78,19 @@ search:
       category: audio_walking_arts
     - query: "Friction Arts Birmingham UK 2026"
       category: birmingham_black_country
+      brave_freshness: pm
     - query: '"Civic Square" Birmingham UK 2026'
       category: birmingham_black_country
+      brave_freshness: pm
     - query: "Punch creative agency Birmingham UK arts 2026"
       category: birmingham_black_country
+      brave_freshness: pm
     - query: "Birmingham UK West Midlands arts open call commission 2026"
       category: birmingham_black_country
+      brave_freshness: pm
     - query: '"Creative Black Country" 2026'
       category: birmingham_black_country
+      brave_freshness: pm
     - query: "audio trail funding open call UK 2026"
       category: audio_walking_arts
     - query: "Arts Council England project grants open call 2026"
@@ -106,6 +113,7 @@ search:
       category: arts_health
     - query: '"BOM Lab" Birmingham UK 2026'
       category: birmingham_black_country
+      brave_freshness: pm
 
 keywords:
   - term: arts

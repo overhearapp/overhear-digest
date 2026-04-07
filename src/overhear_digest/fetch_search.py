@@ -127,12 +127,15 @@ def fetch_search_results(
         q = qe.query
         try:
             if search_cfg.provider == "brave":
+                fr = (qe.brave_freshness or "").strip() or (
+                    search_cfg.brave_freshness or ""
+                ).strip() or None
                 rows = _search_brave(
                     client,
                     env.brave_api_key,
                     q,
                     count,
-                    freshness=(search_cfg.brave_freshness or "").strip() or None,
+                    freshness=fr,
                 )
             elif search_cfg.provider == "tavily":
                 rows = _search_tavily(client, env.tavily_api_key, q, count)

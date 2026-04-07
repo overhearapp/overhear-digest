@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from datetime import date, datetime
+from datetime import date, datetime, timedelta, timezone
 from urllib.parse import urlparse
 
 from overhear_digest import categories as cat
@@ -177,6 +177,58 @@ def filter_birmingham_scene_noise(
             slen = len(strip_html(item.summary, limit=2000))
             if slen < min_c:
                 continue
+        out.append(item)
+    return out
+
+
+def _item_published_as_date(item: DigestItem) -> date | None:
+    if item.published is None:
+        return None
+    p = item.published
+    if isinstance(p, datetime):
+        if p.tzinfo is not None:
+            return p.astimezone(timezone.utc).date()
+        return p.date()
+    if isinstance(p, date):
+        return p
+    return None
+
+
+def filter_birmingham_recency(
+    items: list[DigestItem],
+    today: date,
+    settings: DigestSettings,
+) -> list[DigestItem]:
+    """
+    Keep Birmingham & Black Country items within ~the last month: dated items by
+    ``published``, search hits by title/URL year (drop prior calendar years) and
+    rely on per-query Brave ``pm`` for index recency.
+    """
+    days = settings.filters.birmingham_max_age_days
+    if days <= 0:
+        return items
+    out: list[DigestItem] = []
+    cutoff = today - timedelta(days=days)
+    for item in items:
+        if item.category != cat.BIRMINGHAM_BLACK_COUNTRY:
+            out.append(item)
+            continue
+
+        pub_d = _item_published_as_date(item)
+        if pub_d is not None:
+            if pub_d < cutoff:
+                continue
+            out.append(item)
+            continue
+
+        if item.origin == "search":
+            title_years = _recent_window_years_in_text(item.title, today)
+            if title_years and max(title_years) < today.year:
+                continue
+            path_y = _years_in_url_path(item.url)
+            if path_y and max(path_y) < today.year:
+                continue
+
         out.append(item)
     return out
 

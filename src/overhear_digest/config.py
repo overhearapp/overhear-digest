@@ -30,6 +30,8 @@ class SearchQueryEntry(BaseModel):
     query: str
     category: str = "network_other"
     max_results: int | None = None
+    # Brave only; overrides search.brave_freshness for this query (e.g. pm = past month for local news)
+    brave_freshness: str | None = None
 
 
 class SearchConfig(BaseModel):
@@ -120,16 +122,21 @@ class FilterConfig(BaseModel):
             r"^Sandra Hall,\s*Friction Arts",
             r"look back at (our|the)",
             r"\bA look back\b",
+            r"\|\s*Flickr",
+            r"\bFlickr\b",
         ]
     )
     birmingham_drop_url_substrings: list[str] = Field(
         default_factory=lambda: [
             "birmingham-rep.co.uk",
             "find-and-update.company-information.service.gov.uk",
+            "flickr.com",
         ]
     )
     # Search hits with almost no snippet are usually directory junk
     birmingham_min_summary_chars: int = 48
+    # Birmingham & Black Country: drop RSS/items older than this many days (0 = off)
+    birmingham_max_age_days: int = 31
     # artscouncil.org.uk: drop evergreen “open funds / system update / NPLG hub” pages, not one-off announcements
     ace_drop_title_patterns: list[str] = Field(
         default_factory=lambda: [

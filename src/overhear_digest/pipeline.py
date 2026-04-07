@@ -16,6 +16,7 @@ from overhear_digest.filters import (
     drop_blocked_hosts,
     drop_blocked_url_substrings,
     filter_artscouncil_generic_pages,
+    filter_birmingham_recency,
     filter_birmingham_scene_noise,
     filter_by_recency,
     filter_nlhf_rss_soft_news,
@@ -65,6 +66,7 @@ def build_openclaw_digest(
     ]
     items = filter_birmingham_scene_noise(items, settings)
     items = filter_by_recency(items, today, settings)
+    items = filter_birmingham_recency(items, today, settings)
     for i in items:
         apply_deadline_classification(i, today)
     items = [i for i in items if not item_should_drop_entirely(i)]
